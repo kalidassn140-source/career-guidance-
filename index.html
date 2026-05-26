@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Career Guidance Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#040b14;
+  --bg2:#071220;
+  --bg3:#0a1a2e;
+  --card:#0d2035;
+  --card2:#102540;
+  --border:rgba(0,200,255,0.12);
+  --border2:rgba(0,200,255,0.25);
+  --accent:#00c8ff;
+  --accent2:#00ff88;
+  --accent3:#ff6b35;
+  --text:#e8f4ff;
+  --muted:#7a9bb5;
+  --muted2:#4a6a82;
+  --heading:'Syne',sans-serif;
+  --body:'DM Sans',sans-serif;
+  --glow:0 0 30px rgba(0,200,255,0.15);
+  --glow2:0 0 60px rgba(0,200,255,0.08);
+  --radius:16px;
+  --radius2:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(0,200,255,0.08),transparent),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(0,255,136,0.04),transparent);pointer-events:none;z-index:0}
+
+/* TYPOGRAPHY */
+h1,h2,h3,h4{font-family:var(--heading);font-weight:700}
+.grad-text{background:linear-gradient(135deg,#00c8ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-text2{background:linear-gradient(135deg,#ff6b35,#ff0080);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* SECTIONS */
+.section{display:none;min-height:100vh;position:relative;z-index:1}
+.section.active{display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(4,11,20,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--heading);font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#00c8ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:1rem;align-items:center}
+.nav-btn{background:transparent;border:1px solid var(--border2);color:var(--accent);padding:0.4rem 1rem;border-radius:8px;cursor:pointer;font-family:var(--body);font-size:0.85rem;transition:all 0.3s}
+.nav-btn:hover{background:rgba(0,200,255,0.1);box-shadow:var(--glow)}
+.nav-btn.active-nav{background:rgba(0,200,255,0.15);color:var(--accent)}
+
+/* CARDS */
+.glass-card{background:rgba(13,32,53,0.7);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(10px);transition:all 0.3s}
+.glass-card:hover{border-color:var(--border2);box-shadow:var(--glow);transform:translateY(-2px)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.75rem;border-radius:10px;border:none;cursor:pointer;font-family:var(--body);font-weight:600;font-size:0.95rem;transition:all 0.3s;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,#00c8ff,#0080ff);color:#fff}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,200,255,0.4);transform:translateY(-2px)}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--accent)}
+.btn-secondary:hover{background:rgba(0,200,255,0.1);box-shadow:var(--glow)}
+.btn-success{background:linear-gradient(135deg,#00ff88,#00c850);color:#001a0a}
+.btn-success:hover{box-shadow:0 0 30px rgba(0,255,136,0.4);transform:translateY(-2px)}
+.btn-danger{background:linear-gradient(135deg,#ff6b35,#ff0050);color:#fff}
+.btn-sm{padding:0.5rem 1.2rem;font-size:0.85rem}
+
+/* FORMS */
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;margin-bottom:0.4rem;color:var(--muted);font-size:0.9rem;font-weight:500}
+.form-control{width:100%;padding:0.75rem 1rem;background:rgba(7,18,32,0.8);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--body);font-size:0.95rem;transition:all 0.3s;outline:none}
+.form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,200,255,0.1)}
+.form-control option{background:var(--bg3)}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+
+/* PROGRESS */
+.progress-bar{height:4px;background:rgba(0,200,255,0.1);border-radius:4px;overflow:hidden;margin-bottom:2rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,#00c8ff,#00ff88);border-radius:4px;transition:width 0.5s ease}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:0.3rem 0.8rem;border-radius:20px;font-size:0.78rem;font-weight:600}
+.badge-accent{background:rgba(0,200,255,0.15);color:var(--accent);border:1px solid rgba(0,200,255,0.3)}
+.badge-success{background:rgba(0,255,136,0.12);color:var(--accent2);border:1px solid rgba(0,255,136,0.25)}
+.badge-warning{background:rgba(255,107,53,0.12);color:var(--accent3);border:1px solid rgba(255,107,53,0.25)}
+
+/* STAT CARDS */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.5rem;text-align:center}
+.stat-number{font-family:var(--heading);font-size:2.5rem;font-weight:800;line-height:1}
+.stat-label{color:var(--muted);font-size:0.85rem;margin-top:0.5rem}
+
+/* HERO */
+#hero-section{padding:120px 2rem 4rem;text-align:center}
+.hero-title{font-size:clamp(2.5rem,6vw,5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem}
+.hero-sub{color:var(--muted);font-size:1.15rem;max-width:600px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* PARTICLES */
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:float linear infinite;opacity:0.4}
+@keyframes float{from{transform:translateY(100vh) scale(0)}to{transform:translateY(-10vh) scale(1)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+.fade-in{animation:fadeIn 0.6s ease forwards}
+
+/* STEP HEADER */
+.step-header{padding:100px 2rem 2rem;max-width:900px;margin:0 auto}
+.step-title{font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:0.75rem}
+.step-sub{color:var(--muted);font-size:1rem;line-height:1.6}
+
+/* CONTAINER */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+.section-content{max-width:900px;margin:0 auto;padding:0 2rem 4rem}
+
+/* OPTION CARDS */
+.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin:2rem 0}
+.option-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.option-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,200,255,0.05),transparent);opacity:0;transition:opacity 0.3s}
+.option-card:hover{border-color:var(--accent);box-shadow:var(--glow);transform:translateY(-3px)}
+.option-card:hover::before{opacity:1}
+.option-card.selected{border-color:var(--accent);background:rgba(0,200,255,0.08);box-shadow:var(--glow)}
+.option-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.option-title{font-family:var(--heading);font-size:1.1rem;font-weight:700;margin-bottom:0.5rem}
+.option-desc{color:var(--muted);font-size:0.85rem;line-height:1.5}
+
+/* MARKS INPUT */
+.marks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.mark-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius2);padding:1.25rem}
+.mark-subject{font-weight:600;margin-bottom:0.75rem;font-size:0.9rem}
+.mark-input{width:100%;padding:0.6rem;background:rgba(7,18,32,0.8);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1rem;text-align:center;outline:none;font-family:var(--body)}
+.mark-input:focus{border-color:var(--accent)}
+.mark-max{color:var(--muted2);font-size:0.75rem;text-align:center;margin-top:0.4rem}
+
+/* RESULT CARDS */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:2rem 0}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.5rem;text-align:center}
+.result-value{font-family:var(--heading);font-size:2rem;font-weight:800;margin:0.5rem 0}
+.result-label{color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em}
+
+/* CAREER CARDS */
+.career-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin:2rem 0}
+.career-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.career-card:hover{transform:translateY(-4px);box-shadow:var(--glow)}
+.career-card.engineering:hover{border-color:#00c8ff}
+.career-card.medical:hover{border-color:#00ff88}
+.career-card.commerce:hover{border-color:#ff6b35}
+.career-card.government:hover{border-color:#ffd700}
+.career-card.arts:hover{border-color:#ff80ff}
+.career-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.career-stripe.engineering{background:linear-gradient(90deg,#00c8ff,#0080ff)}
+.career-stripe.medical{background:linear-gradient(90deg,#00ff88,#00c850)}
+.career-stripe.commerce{background:linear-gradient(90deg,#ff6b35,#ff0080)}
+.career-stripe.government{background:linear-gradient(90deg,#ffd700,#ff9500)}
+.career-stripe.arts{background:linear-gradient(90deg,#ff80ff,#8000ff)}
+.career-stripe.it{background:linear-gradient(90deg,#00c8ff,#8000ff)}
+
+/* DETAIL SECTIONS */
+.detail-section{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem}
+.detail-title{font-family:var(--heading);font-size:1.1rem;font-weight:700;margin-bottom:1rem;color:var(--accent)}
+.tag-list{display:flex;flex-wrap:wrap;gap:0.5rem}
+.tag{padding:0.3rem 0.75rem;background:rgba(0,200,255,0.1);border:1px solid rgba(0,200,255,0.2);border-radius:20px;font-size:0.8rem;color:var(--accent)}
+.tag.green{background:rgba(0,255,136,0.1);border-color:rgba(0,255,136,0.2);color:var(--accent2)}
+.tag.orange{background:rgba(255,107,53,0.1);border-color:rgba(255,107,53,0.2);color:var(--accent3)}
+.salary-range{font-family:var(--heading);font-size:1.5rem;font-weight:700;color:var(--accent2)}
+.rating-bar{display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem}
+.rating-fill{height:8px;border-radius:4px;background:linear-gradient(90deg,#00c8ff,#00ff88)}
+
+/* BACK BTN */
+.back-btn{display:inline-flex;align-items:center;gap:0.5rem;color:var(--muted);cursor:pointer;padding:0.5rem;border-radius:8px;transition:all 0.3s;margin-bottom:1.5rem;background:none;border:none;font-family:var(--body);font-size:0.9rem}
+.back-btn:hover{color:var(--accent)}
+.back-btn::before{content:'←';font-size:1.1rem}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(5px)}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);max-width:700px;width:100%;max-height:90vh;overflow-y:auto;padding:2.5rem;animation:fadeIn 0.3s ease}
+
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+.dash-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.25rem}
+.dash-num{font-family:var(--heading);font-size:1.8rem;font-weight:800}
+.dash-lbl{color:var(--muted);font-size:0.8rem;margin-top:0.25rem}
+
+/* NOTIFICATION */
+.notif{position:fixed;bottom:2rem;right:2rem;background:var(--card2);border:1px solid var(--accent);border-radius:var(--radius2);padding:1.25rem 1.5rem;z-index:300;animation:fadeIn 0.4s ease;max-width:320px;box-shadow:var(--glow)}
+.notif.hidden{display:none}
+
+/* ENTRANCE EXAM */
+.exam-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.25rem}
+.exam-badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:6px;font-size:0.78rem;font-weight:700;margin-bottom:1rem}
+
+/* GOVT JOBS */
+.job-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius2);padding:1.5rem;margin-bottom:1rem;display:flex;gap:1.25rem;align-items:flex-start}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ALERTS */
+.alert{padding:1rem 1.25rem;border-radius:10px;margin-bottom:1rem;font-size:0.9rem}
+.alert-info{background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);color:var(--accent)}
+.alert-success{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);color:var(--accent2)}
+.alert-warning{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);color:var(--accent3)}
+
+/* LOADER */
+.loader{display:flex;align-items:center;justify-content:center;padding:3rem;flex-direction:column;gap:1rem}
+.loader-ring{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+
+/* WELCOME SCREEN */
+.welcome-hero{text-align:center;padding:3rem 2rem;background:var(--card);border:1px solid var(--accent);border-radius:var(--radius);margin-bottom:2rem;position:relative;overflow:hidden}
+.welcome-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,200,255,0.08),transparent);pointer-events:none}
+.checkmark{font-size:4rem;margin-bottom:1rem;display:block}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0.75rem 1rem}
+  .hero-title{font-size:2.2rem}
+  .step-header{padding:80px 1rem 1.5rem}
+  .section-content{padding:0 1rem 3rem}
+  .card-grid,.career-grid,.option-grid{grid-template-columns:1fr}
+  .modal-box{padding:1.5rem}
+  .nav-links{gap:0.5rem}
+}
+
+/* GLOW LINES */
+.glow-line{height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:3rem 0;opacity:0.3}
+
+/* TABS */
+.tab-group{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--body);font-size:0.9rem;border-bottom:2px solid transparent;transition:all 0.3s;margin-bottom:-1px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* INPUT WITH LABEL INLINE */
+.input-with-unit{display:flex;align-items:center;background:rgba(7,18,32,0.8);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.input-with-unit .form-control{border:none;border-radius:0}
+.input-with-unit .unit{padding:0 1rem;color:var(--muted);font-size:0.9rem;white-space:nowrap}
+
+/* LOADING DOTS */
+.dots::after{content:'.';animation:dots 1.2s infinite}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}100%{content:'.'}}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- NOTIFICATION -->
+<div class="notif hidden" id="notification">
+  <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem" id="notif-title">✓ New User Registered</div>
+  <div style="color:var(--muted);font-size:0.82rem" id="notif-msg"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🎯 CareerIQ</div>
+  <div class="nav-links">
+    <button class="nav-btn active-nav" onclick="showSection('home')">Home</button>
+    <button class="nav-btn" onclick="showSection('entrance')">Exams</button>
+    <button class="nav-btn" onclick="showSection('govt')">Govt Jobs</button>
+    <button class="nav-btn" onclick="showSection('dashboard')">Dashboard</button>
+  </div>
+</nav>
+
+<!-- =========== SECTION: HOME =========== -->
+<section id="home" class="section active">
+  <div id="hero-section">
+    <div style="margin-bottom:1.5rem">
+      <span class="badge badge-accent">✨ AI-Powered Career Intelligence</span>
+    </div>
+    <h1 class="hero-title">
+      Discover Your<br><span class="grad-text">Perfect Career Path</span>
+    </h1>
+    <p class="hero-sub">Advanced AI-driven platform providing personalized career guidance for Tamil Nadu students. From SSLC to higher studies — we map your future.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showSection('step2')">🚀 Start Career Analysis</button>
+      <button class="btn btn-secondary" onclick="showSection('dashboard')">📊 View Dashboard</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="container">
+    <div class="card-grid" style="margin-bottom:4rem">
+      <div class="stat-card glass-card">
+        <div class="stat-number grad-text" id="hero-stat1">0</div>
+        <div class="stat-label">Students Guided</div>
+      </div>
+      <div class="stat-card glass-card">
+        <div class="stat-number" style="color:var(--accent2)">50+</div>
+        <div class="stat-label">Career Pathways</div>
+      </div>
+      <div class="stat-card glass-card">
+        <div class="stat-number" style="color:var(--accent3)">8</div>
+        <div class="stat-label">Entrance Exams Covered</div>
+      </div>
+      <div class="stat-card glass-card">
+        <div class="stat-number grad-text">100%</div>
+        <div class="stat-label">Personalized Guidance</div>
+      </div>
+    </div>
+
+    <!-- CAREER AREAS -->
+    <div style="text-align:center;margin-bottom:2.5rem">
+      <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);margin-bottom:0.75rem">Career <span class="grad-text">Domains</span></h2>
+      <p style="color:var(--muted)">Comprehensive guidance across all major educational streams</p>
+    </div>
+    <div class="card-grid" style="margin-bottom:4rem">
+      <div class="glass-card" style="padding:2rem;cursor:pointer" onclick="showSection('step2')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">⚙️</div>
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem">Engineering</h3>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">CSE, ECE, Mechanical, Civil, AI&DS and 15+ more branches with placement data</p>
+      </div>
+      <div class="glass-card" style="padding:2rem;cursor:pointer" onclick="showSection('step2')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">🏥</div>
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem">Medical</h3>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">MBBS, BDS, Pharmacy, Nursing, Physiotherapy with NEET guidance</p>
+      </div>
+      <div class="glass-card" style="padding:2rem;cursor:pointer" onclick="showSection('step2')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">🎨</div>
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem">Arts & Science</h3>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">BA, BSc, research opportunities, UPSC, and Law programs</p>
+      </div>
+      <div class="glass-card" style="padding:2rem;cursor:pointer" onclick="showSection('step2')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">📊</div>
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem">Commerce</h3>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">BCom, CA, CS, Banking, Finance with salary insights</p>
+      </div>
+      <div class="glass-card" style="padding:2rem;cursor:pointer" onclick="showSection('govt')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">🏛️</div>
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem">Government</h3>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">TNPSC, SSC, Railway, Police, Army, Banking jobs guide</p>
+      </div>
+      <div class="glass-card" style="padding:2rem;cursor:pointer" onclick="showSection('entrance')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">✈️</div>
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem">Higher Studies</h3>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">GATE, GRE, IELTS, TOEFL for MS/MTech abroad and PSU jobs</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== STEP 2: EDUCATION LEVEL =========== -->
+<section id="step2" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="showSection('home')">Back to Home</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:16%"></div></div>
+    <span class="badge badge-accent" style="margin-bottom:1rem">Step 1 of 6</span>
+    <h2 class="step-title">Select Your <span class="grad-text">Education Level</span></h2>
+    <p class="step-sub">Choose your current qualification to get personalized career guidance</p>
+  </div>
+  <div class="section-content">
+    <div class="option-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div class="option-card" onclick="selectEducation('sslc')">
+        <span class="option-icon">📚</span>
+        <div class="option-title">SSLC (10th Standard)</div>
+        <div class="option-desc">Completed Class 10. Get guidance on HSC group selection based on your marks and interests.</div>
+        <div style="margin-top:1rem"><span class="badge badge-accent">Most Popular</span></div>
+      </div>
+      <div class="option-card" onclick="selectEducation('hsc')">
+        <span class="option-icon">🎓</span>
+        <div class="option-title">HSC (12th Standard)</div>
+        <div class="option-desc">Completed Class 12. Get detailed career path analysis based on your HSC group and marks.</div>
+        <div style="margin-top:1rem"><span class="badge badge-success">Career Ready</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== STEP 3: SSLC FORM =========== -->
+<section id="step-sslc" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="showSection('step2')">Back</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+    <span class="badge badge-accent" style="margin-bottom:1rem">Step 2 of 6 — SSLC</span>
+    <h2 class="step-title">Your <span class="grad-text">Profile</span></h2>
+    <p class="step-sub">Enter your details and SSLC marks for personalized group recommendations</p>
+  </div>
+  <div class="section-content">
+    <!-- PERSONAL DETAILS -->
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-family:var(--heading);margin-bottom:1.5rem;color:var(--accent)">Personal Information</h3>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name *</label><input class="form-control" id="s-name" placeholder="Enter your full name"></div>
+        <div class="form-group"><label class="form-label">Age *</label><input class="form-control" id="s-age" type="number" placeholder="Age" min="14" max="20"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Gender *</label>
+          <select class="form-control" id="s-gender">
+            <option value="">Select Gender</option>
+            <option>Male</option><option>Female</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">District *</label>
+          <select class="form-control" id="s-district">
+            <option value="">Select District</option>
+            <option>Chennai</option><option>Coimbatore</option><option>Madurai</option><option>Tiruchirappalli</option><option>Salem</option><option>Tirunelveli</option><option>Vellore</option><option>Erode</option><option>Theni</option><option>Dindigul</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">School Name *</label><input class="form-control" id="s-school" placeholder="School name"></div>
+        <div class="form-group"><label class="form-label">Phone Number *</label><input class="form-control" id="s-phone" type="tel" placeholder="10-digit mobile number" maxlength="10"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email Address *</label><input class="form-control" id="s-email" type="email" placeholder="your@email.com"></div>
+    </div>
+
+    <!-- MARKS -->
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-family:var(--heading);margin-bottom:0.5rem;color:var(--accent)">SSLC Marks</h3>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem">Enter marks out of 100 for each subject</p>
+      <div class="marks-grid">
+        <div class="mark-card"><div class="mark-subject">🔤 Tamil</div><input class="mark-input form-control" id="s-tamil" type="number" placeholder="0" min="0" max="100"><div class="mark-max">Max: 100</div></div>
+        <div class="mark-card"><div class="mark-subject">🔤 English</div><input class="mark-input form-control" id="s-english" type="number" placeholder="0" min="0" max="100"><div class="mark-max">Max: 100</div></div>
+        <div class="mark-card"><div class="mark-subject">🔢 Maths</div><input class="mark-input form-control" id="s-maths" type="number" placeholder="0" min="0" max="100"><div class="mark-max">Max: 100</div></div>
+        <div class="mark-card"><div class="mark-subject">🔬 Science</div><input class="mark-input form-control" id="s-science" type="number" placeholder="0" min="0" max="100"><div class="mark-max">Max: 100</div></div>
+        <div class="mark-card"><div class="mark-subject">🌍 Social Science</div><input class="mark-input form-control" id="s-social" type="number" placeholder="0" min="0" max="100"><div class="mark-max">Max: 100</div></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="submitSSLC()">Analyze & Get Group Recommendations →</button>
+  </div>
+</section>
+
+<!-- =========== STEP: SSLC GROUP SELECTION =========== -->
+<section id="step-sslc-group" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="showSection('step-sslc')">Back</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+    <span class="badge badge-accent" style="margin-bottom:1rem">Step 3 of 6</span>
+    <h2 class="step-title">Choose Your HSC <span class="grad-text">Group</span></h2>
+    <p class="step-sub">Based on your SSLC performance, here are our recommendations</p>
+  </div>
+  <div class="section-content">
+    <div id="sslc-analysis-result" style="margin-bottom:2rem"></div>
+    <div class="option-grid" id="sslc-group-options"></div>
+  </div>
+</section>
+
+<!-- =========== STEP 4: HSC FORM =========== -->
+<section id="step-hsc" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="showSection('step2')">Back</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+    <span class="badge badge-success" style="margin-bottom:1rem">Step 2 of 6 — HSC</span>
+    <h2 class="step-title">Your <span class="grad-text">HSC Profile</span></h2>
+    <p class="step-sub">Enter your HSC details for career path analysis</p>
+  </div>
+  <div class="section-content">
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-family:var(--heading);margin-bottom:1.5rem;color:var(--accent)">Personal Information</h3>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name *</label><input class="form-control" id="h-name" placeholder="Enter your full name"></div>
+        <div class="form-group"><label class="form-label">Age *</label><input class="form-control" id="h-age" type="number" placeholder="Age" min="16" max="25"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Gender *</label>
+          <select class="form-control" id="h-gender">
+            <option value="">Select Gender</option>
+            <option>Male</option><option>Female</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">District *</label>
+          <select class="form-control" id="h-district">
+            <option value="">Select District</option>
+            <option>Chennai</option><option>Coimbatore</option><option>Madurai</option><option>Tiruchirappalli</option><option>Salem</option><option>Tirunelveli</option><option>Vellore</option><option>Erode</option><option>Theni</option><option>Dindigul</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">School Name *</label><input class="form-control" id="h-school" placeholder="School/College name"></div>
+        <div class="form-group"><label class="form-label">Phone Number *</label><input class="form-control" id="h-phone" type="tel" placeholder="10-digit mobile number" maxlength="10"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email Address *</label><input class="form-control" id="h-email" type="email" placeholder="your@email.com"></div>
+    </div>
+
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-family:var(--heading);margin-bottom:1rem;color:var(--accent)">HSC Group *</h3>
+      <div class="option-grid" id="hsc-group-selector" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"></div>
+    </div>
+
+    <div id="hsc-marks-section" style="display:none">
+      <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+        <h3 style="font-family:var(--heading);margin-bottom:0.5rem;color:var(--accent)">HSC Marks</h3>
+        <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem">Enter marks out of 100 for each subject</p>
+        <div class="marks-grid" id="hsc-marks-inputs"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="submitHSC()">Analyze Career Paths →</button>
+    </div>
+  </div>
+</section>
+
+<!-- =========== STEP: MARKS ANALYSIS =========== -->
+<section id="step-analysis" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="goBackFromAnalysis()">Back</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:66%"></div></div>
+    <span class="badge badge-success" style="margin-bottom:1rem">Step 4 of 6 — Analysis</span>
+    <h2 class="step-title">Your <span class="grad-text">Performance Analysis</span></h2>
+    <p class="step-sub">Detailed breakdown of your academic performance and cutoff scores</p>
+  </div>
+  <div class="section-content">
+    <div id="analysis-content"></div>
+    <button class="btn btn-primary" style="margin-top:1.5rem;width:100%" onclick="showSection('step-careers')">Explore Career Options →</button>
+  </div>
+</section>
+
+<!-- =========== STEP: CAREER OPTIONS =========== -->
+<section id="step-careers" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="showSection('step-analysis')">Back</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:83%"></div></div>
+    <span class="badge badge-success" style="margin-bottom:1rem">Step 5 of 6 — Careers</span>
+    <h2 class="step-title">Your <span class="grad-text">Career Paths</span></h2>
+    <p class="step-sub">Personalized career options based on your group and performance</p>
+  </div>
+  <div class="section-content">
+    <div id="careers-content"></div>
+  </div>
+</section>
+
+<!-- =========== STEP: BRANCH DETAIL =========== -->
+<section id="step-branch-detail" class="section">
+  <div class="step-header">
+    <button class="back-btn" onclick="showSection('step-careers')">Back to Careers</button>
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    <span class="badge badge-success" style="margin-bottom:1rem">Career Detail</span>
+    <h2 class="step-title" id="branch-detail-title">Branch Details</h2>
+    <p class="step-sub" id="branch-detail-sub"></p>
+  </div>
+  <div class="section-content">
+    <div id="branch-detail-content"></div>
+  </div>
+</section>
+
+<!-- =========== SECTION: ENTRANCE EXAMS =========== -->
+<section id="entrance" class="section">
+  <div class="step-header">
+    <h2 class="step-title">Entrance <span class="grad-text">Exams Guide</span></h2>
+    <p class="step-sub">Complete guidance for all major entrance examinations</p>
+  </div>
+  <div class="section-content" id="entrance-content"></div>
+</section>
+
+<!-- =========== SECTION: GOVT JOBS =========== -->
+<section id="govt" class="section">
+  <div class="step-header">
+    <h2 class="step-title">Government <span class="grad-text">Job Guide</span></h2>
+    <p class="step-sub">Comprehensive guide to government employment opportunities</p>
+  </div>
+  <div class="section-content" id="govt-content"></div>
+</section>
+
+<!-- =========== SECTION: DASHBOARD =========== -->
+<section id="dashboard" class="section">
+  <div class="step-header">
+    <h2 class="step-title">Analytics <span class="grad-text">Dashboard</span></h2>
+    <p class="step-sub">Real-time insights from student registrations</p>
+  </div>
+  <div class="section-content">
+    <div id="dashboard-content"></div>
+  </div>
+</section>
+
+<!-- =========== SECTION: WELCOME =========== -->
+<section id="step-welcome" class="section">
+  <div class="step-header">
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    <span class="badge badge-success" style="margin-bottom:1rem">✓ Complete</span>
+    <h2 class="step-title">Welcome to Your <span class="grad-text">Career Journey!</span></h2>
+  </div>
+  <div class="section-content">
+    <div id="welcome-content"></div>
+  </div>
+</section>
+
+<script>
+// ============================================================
+//  CONFIGURATION — Replace with your Apps Script URL
+// ============================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+
+// ============================================================
+//  STATE
+// ============================================================
+const state = {
+  educationLevel: '',
+  hscGroup: '',
+  userData: {},
+  marks: {},
+  selectedCareer: '',
+  dashData: { total:0, eng:0, med:0, arts:0, comm:0, govt:0, it:0, duplicates:0 }
+};
+
+// ============================================================
+//  PARTICLES
+// ============================================================
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    const size = Math.random()*4+1;
+    const colors=['rgba(0,200,255,0.5)','rgba(0,255,136,0.4)','rgba(255,107,53,0.3)'];
+    p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*3)]};animation-duration:${Math.random()*20+10}s;animation-delay:${Math.random()*-20}s`;
+    c.appendChild(p);
+  }
+})();
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='entrance') renderEntrance();
+  if(id==='govt') renderGovt();
+  if(id==='dashboard') renderDashboard();
+}
+
+// ============================================================
+//  STEP 2: EDUCATION LEVEL
+// ============================================================
+function selectEducation(level){
+  state.educationLevel = level;
+  if(level==='sslc') showSection('step-sslc');
+  else{ renderHSCGroupSelector(); showSection('step-hsc'); }
+}
+
+// ============================================================
+//  SSLC SUBMISSION
+// ============================================================
+function submitSSLC(){
+  const name=document.getElementById('s-name').value.trim();
+  const age=document.getElementById('s-age').value;
+  const gender=document.getElementById('s-gender').value;
+  const district=document.getElementById('s-district').value;
+  const school=document.getElementById('s-school').value.trim();
+  const phone=document.getElementById('s-phone').value.trim();
+  const email=document.getElementById('s-email').value.trim();
+  const tamil=parseFloat(document.getElementById('s-tamil').value)||0;
+  const english=parseFloat(document.getElementById('s-english').value)||0;
+  const maths=parseFloat(document.getElementById('s-maths').value)||0;
+  const science=parseFloat(document.getElementById('s-science').value)||0;
+  const social=parseFloat(document.getElementById('s-social').value)||0;
+
+  if(!name||!age||!gender||!district||!school||!phone||!email){
+    showAlert('Please fill all required fields.','warning');return;
+  }
+  if(phone.length!==10||!/^\d+$/.test(phone)){showAlert('Enter valid 10-digit phone number.','warning');return;}
+  if(!/\S+@\S+\.\S+/.test(email)){showAlert('Enter valid email address.','warning');return;}
+  if([tamil,english,maths,science,social].some(m=>m<0||m>100)){showAlert('Marks must be between 0-100.','warning');return;}
+
+  state.userData={name,age,gender,district,school,phone,email};
+  state.marks={tamil,english,maths,science,social,type:'sslc'};
+
+  const total=tamil+english+maths+science+social;
+  const pct=(total/500*100).toFixed(1);
+
+  renderSSLCAnalysis(total,pct,maths,science);
+  showSection('step-sslc-group');
+  sendToSheets({...state.userData,...state.marks,educationLevel:'SSLC',total,percentage:pct});
+}
+
+function renderSSLCAnalysis(total,pct,maths,science){
+  const div=document.getElementById('sslc-analysis-result');
+  let recommendation='';
+  if(maths>=80&&science>=80) recommendation='<span class="badge badge-accent">Recommended: Bio-Maths or Computer Science</span>';
+  else if(maths>=70) recommendation='<span class="badge badge-accent">Recommended: Maths Groups</span>';
+  else recommendation='<span class="badge badge-success">Recommended: Commerce or Arts</span>';
+
+  div.innerHTML=`
+    <div class="glass-card" style="padding:1.75rem;margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">
+        <div><h3 style="font-family:var(--heading);font-size:1.2rem">SSLC Analysis — <span style="color:var(--accent)">${state.userData.name}</span></h3><p style="color:var(--muted);font-size:0.85rem">Total: ${total}/500 · Percentage: ${pct}%</p></div>
+        ${recommendation}
+      </div>
+      <div class="result-grid">
+        <div class="result-card"><div class="result-label">Total Score</div><div class="result-value grad-text">${total}</div><div style="color:var(--muted);font-size:0.75rem">out of 500</div></div>
+        <div class="result-card"><div class="result-label">Percentage</div><div class="result-value" style="color:var(--accent2)">${pct}%</div></div>
+        <div class="result-card"><div class="result-label">Maths Score</div><div class="result-value" style="color:var(--accent3)">${state.marks.maths}</div></div>
+        <div class="result-card"><div class="result-label">Science Score</div><div class="result-value" style="color:var(--accent)">${state.marks.science}</div></div>
+      </div>
+    </div>`;
+
+  // Group options
+  const groups=[
+    {id:'biomaths',icon:'🔬',title:'Bio-Maths',desc:'Physics, Chemistry, Biology, Maths. Opens Engineering & Medical doors.',careers:'Engineering, MBBS, BDS, BSc'},
+    {id:'cs',icon:'💻',title:'Computer Science',desc:'Physics, Chemistry, Computer Science, Maths. Best for IT careers.',careers:'CSE, IT, Software Engineer'},
+    {id:'commerce',icon:'📊',title:'Commerce',desc:'Commerce, Accountancy, Economics, Business Maths.',careers:'CA, CS, Banking, BCom'},
+    {id:'history',icon:'📜',title:'History',desc:'History, Economics, Political Science, Geography.',careers:'Arts, Law, UPSC, IAS'},
+    {id:'purescience',icon:'🔭',title:'Pure Science',desc:'Physics, Chemistry, Botany, Zoology.',careers:'BSc, Research, CSIR'},
+    {id:'vocational',icon:'🔧',title:'Vocational',desc:'Technical and skill-based subjects.',careers:'Diploma, ITI, Skill Jobs'}
+  ];
+
+  const optDiv=document.getElementById('sslc-group-options');
+  optDiv.innerHTML=groups.map(g=>`
+    <div class="option-card" onclick="selectSSLCGroup('${g.id}')">
+      <span class="option-icon">${g.icon}</span>
+      <div class="option-title">${g.title}</div>
+      <div class="option-desc">${g.desc}</div>
+      <div style="margin-top:0.75rem;color:var(--accent);font-size:0.8rem;font-weight:600">→ ${g.careers}</div>
+    </div>`).join('');
+}
+
+function selectSSLCGroup(groupId){
+  state.hscGroup=groupId;
+  state.educationLevel='sslc-group-selected';
+  // For SSLC, we recommend group - direct to welcome/info
+  showWelcomeForSSLC(groupId);
+}
+
+function showWelcomeForSSLC(groupId){
+  const groupNames={biomaths:'Bio-Maths',cs:'Computer Science',commerce:'Commerce',history:'History',purescience:'Pure Science',vocational:'Vocational'};
+  const name=state.userData.name;
+  const gname=groupNames[groupId]||groupId;
+  renderWelcomeScreen(name,'HSC '+gname,'Recommended HSC Group',gname);
+  showSection('step-welcome');
+}
+
+// ============================================================
+//  HSC GROUP SELECTOR
+// ============================================================
+const HSC_GROUPS={
+  biomaths:{name:'Bio-Maths',icon:'🔬',subjects:['Tamil','English','Maths','Physics','Chemistry','Biology']},
+  cs:{name:'Computer Science',icon:'💻',subjects:['Tamil','English','Maths','Physics','Chemistry','Computer Science']},
+  purescience:{name:'Pure Science',icon:'🔭',subjects:['Tamil','English','Physics','Chemistry','Botany','Zoology']},
+  commerce:{name:'Commerce',icon:'📊',subjects:['Tamil','English','Commerce','Accountancy','Economics','Business Maths']},
+  history:{name:'History',icon:'📜',subjects:['Tamil','English','History','Economics','Political Science','Geography']},
+  vocational:{name:'Vocational',icon:'🔧',subjects:['Tamil','English','Vocational Theory','Vocational Practical','Related Theory','Project Work']}
+};
+
+function renderHSCGroupSelector(){
+  const div=document.getElementById('hsc-group-selector');
+  div.innerHTML=Object.entries(HSC_GROUPS).map(([id,g])=>`
+    <div class="option-card" id="grp-${id}" onclick="selectHSCGroup('${id}')">
+      <span class="option-icon">${g.icon}</span>
+      <div class="option-title">${g.name}</div>
+    </div>`).join('');
+}
+
+function selectHSCGroup(gid){
+  document.querySelectorAll('#hsc-group-selector .option-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('grp-'+gid).classList.add('selected');
+  state.hscGroup=gid;
+  renderHSCMarksInputs(gid);
+  document.getElementById('hsc-marks-section').style.display='block';
+  document.getElementById('hsc-marks-section').scrollIntoView({behavior:'smooth'});
+}
+
+function renderHSCMarksInputs(gid){
+  const subjects=HSC_GROUPS[gid].subjects;
+  const div=document.getElementById('hsc-marks-inputs');
+  div.innerHTML=subjects.map((s,i)=>`
+    <div class="mark-card">
+      <div class="mark-subject">${s}</div>
+      <input class="mark-input form-control" id="h-mark-${i}" type="number" placeholder="0" min="0" max="100">
+      <div class="mark-max">Max: 100</div>
+    </div>`).join('');
+}
+
+// ============================================================
+//  HSC SUBMISSION
+// ============================================================
+function submitHSC(){
+  const name=document.getElementById('h-name').value.trim();
+  const age=document.getElementById('h-age').value;
+  const gender=document.getElementById('h-gender').value;
+  const district=document.getElementById('h-district').value;
+  const school=document.getElementById('h-school').value.trim();
+  const phone=document.getElementById('h-phone').value.trim();
+  const email=document.getElementById('h-email').value.trim();
+
+  if(!name||!age||!gender||!district||!school||!phone||!email){showAlert('Please fill all required fields.','warning');return;}
+  if(!state.hscGroup){showAlert('Please select your HSC group.','warning');return;}
+  if(phone.length!==10||!/^\d+$/.test(phone)){showAlert('Enter valid 10-digit phone number.','warning');return;}
+  if(!/\S+@\S+\.\S+/.test(email)){showAlert('Enter valid email address.','warning');return;}
+
+  const subjects=HSC_GROUPS[state.hscGroup].subjects;
+  const marks={};
+  let allFilled=true;
+  subjects.forEach((s,i)=>{
+    const v=parseFloat(document.getElementById('h-mark-'+i).value);
+    if(isNaN(v)||v<0||v>100){allFilled=false;}
+    marks[s.toLowerCase().replace(/ /g,'_')]=isNaN(v)?0:v;
+  });
+  if(!allFilled){showAlert('Please enter valid marks (0-100) for all subjects.','warning');return;}
+
+  state.userData={name,age,gender,district,school,phone,email};
+  state.marks={...marks,type:'hsc',subjects};
+
+  renderAnalysis();
+  showSection('step-analysis');
+  sendToSheets({...state.userData,...marks,educationLevel:'HSC',hscGroup:state.hscGroup});
+}
+
+// ============================================================
+//  ANALYSIS
+// ============================================================
+function renderAnalysis(){
+  const gid=state.hscGroup;
+  const marks=state.marks;
+  const subjects=HSC_GROUPS[gid].subjects;
+  const values=subjects.map((s,i)=>marks[s.toLowerCase().replace(/ /g,'_')]||0);
+  const total=values.reduce((a,b)=>a+b,0);
+  const max=subjects.length*100;
+  const pct=(total/max*100).toFixed(1);
+  const avg=(total/subjects.length).toFixed(1);
+
+  let cutoffHTML='';
+  let cutoff=0;
+  if(gid==='biomaths'||gid==='cs'){
+    const maths=values[2]||0;
+    const physics=values[3]||0;
+    const chem=values[4]||0;
+    cutoff=+(maths+(physics/2)+(chem/2)).toFixed(2);
+    cutoffHTML=`<div class="result-card"><div class="result-label">Engineering Cutoff</div><div class="result-value" style="color:var(--accent3)">${cutoff}</div><div style="color:var(--muted);font-size:0.75rem">Maths+(Phy/2)+(Chem/2)</div></div>`;
+  }
+  if(gid==='biomaths'||gid==='purescience'){
+    const bio=values[5]||0;
+    const physics=values[3]||0;
+    const chem=values[4]||0;
+    const medTotal=bio+physics+chem;
+    cutoffHTML+=`<div class="result-card"><div class="result-label">Medical Score</div><div class="result-value" style="color:var(--accent2)">${medTotal}</div><div style="color:var(--muted);font-size:0.75rem">Bio+Phy+Chem</div></div>`;
+  }
+  if(gid==='commerce'){
+    const comm=values[2]||0;
+    const acc=values[3]||0;
+    const econ=values[4]||0;
+    const bm=values[5]||0;
+    const commTotal=comm+acc+econ+bm;
+    cutoffHTML+=`<div class="result-card"><div class="result-label">Commerce Score</div><div class="result-value" style="color:var(--accent)">${commTotal}</div><div style="color:var(--muted);font-size:0.75rem">Commerce+Acc+Econ+BM</div></div>`;
+  }
+
+  // Strengths
+  const subjectScores=subjects.map((s,i)=>({name:s,score:values[i]}));
+  const strengths=subjectScores.filter(s=>s.score>=75).map(s=>s.name);
+  const weaknesses=subjectScores.filter(s=>s.score<50).map(s=>s.name);
+
+  const div=document.getElementById('analysis-content');
+  div.innerHTML=`
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <div>
+          <h3 style="font-family:var(--heading);font-size:1.3rem">Analysis for <span style="color:var(--accent)">${state.userData.name}</span></h3>
+          <p style="color:var(--muted);font-size:0.85rem">${HSC_GROUPS[gid].name} Group · ${state.userData.district}</p>
+        </div>
+        <span class="badge ${pct>=75?'badge-success':pct>=50?'badge-accent':'badge-warning'}">${pct>=75?'Excellent':pct>=50?'Good':'Average'} Performance</span>
+      </div>
+      <div class="result-grid">
+        <div class="result-card"><div class="result-label">Total Marks</div><div class="result-value grad-text">${total}</div><div style="color:var(--muted);font-size:0.75rem">out of ${max}</div></div>
+        <div class="result-card"><div class="result-label">Percentage</div><div class="result-value" style="color:var(--accent2)">${pct}%</div></div>
+        <div class="result-card"><div class="result-label">Average</div><div class="result-value" style="color:var(--accent)">${avg}</div></div>
+        ${cutoffHTML}
+      </div>
+    </div>
+
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-family:var(--heading);margin-bottom:1.5rem;color:var(--accent)">Subject-wise Performance</h3>
+      ${subjectScores.map(s=>`
+        <div class="rating-bar">
+          <div style="min-width:140px;font-size:0.9rem">${s.name}</div>
+          <div style="flex:1;background:rgba(0,200,255,0.08);border-radius:4px;height:8px;overflow:hidden">
+            <div class="rating-fill" style="width:${s.score}%"></div>
+          </div>
+          <div style="min-width:50px;text-align:right;font-weight:600;font-size:0.9rem;color:${s.score>=75?'var(--accent2)':s.score>=50?'var(--accent)':'var(--accent3)'}">${s.score}</div>
+        </div>`).join('')}
+    </div>
+
+    ${strengths.length>0?`<div class="alert alert-success">💪 <strong>Strengths:</strong> ${strengths.join(', ')}</div>`:''}
+    ${weaknesses.length>0?`<div class="alert alert-warning">⚠️ <strong>Areas to improve:</strong> ${weaknesses.join(', ')}</div>`:''}
+
+    <div class="detail-section">
+      <div class="detail-title">📊 Chart — Subject Performance</div>
+      <div style="position:relative;height:280px;margin-top:1rem">
+        <canvas id="marksChart" role="img" aria-label="Bar chart of subject-wise HSC marks"></canvas>
+      </div>
+    </div>`;
+
+  setTimeout(()=>{
+    const ctx=document.getElementById('marksChart');
+    if(ctx) new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:subjects,
+        datasets:[{
+          label:'Marks',
+          data:values,
+          backgroundColor:values.map(v=>v>=75?'rgba(0,255,136,0.7)':v>=50?'rgba(0,200,255,0.7)':'rgba(255,107,53,0.7)'),
+          borderColor:values.map(v=>v>=75?'#00ff88':v>=50?'#00c8ff':'#ff6b35'),
+          borderWidth:2,
+          borderRadius:6
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#7a9bb5'}},
+          x:{grid:{display:false},ticks:{color:'#7a9bb5',maxRotation:30}}
+        }
+      }
+    });
+  },100);
+
+  // Store computed marks for career section
+  state.analysisData={total,pct,avg,cutoff,values,subjects};
+}
+
+// ============================================================
+//  CAREER OPTIONS
+// ============================================================
+const CAREER_ACCESS={
+  biomaths:['engineering','medical','arts','government','foreign'],
+  cs:['engineering','it','arts','government'],
+  commerce:['commerce','arts','government'],
+  purescience:['research','arts','government'],
+  history:['arts','law','government'],
+  vocational:['diploma','government']
+};
+
+const ENGINEERING_BRANCHES=[
+  {id:'cse',name:'CSE',full:'Computer Science Engineering',icon:'💻',salary:'8-40 LPA',rating:95,desc:'Software development, AI/ML, cloud computing',companies:['Google','Microsoft','Amazon','Infosys','TCS'],skills:['Python','Java','DSA','ML'],gate:true,psu:false},
+  {id:'ece',name:'ECE',full:'Electronics & Communication Engg',icon:'📡',salary:'5-25 LPA',rating:85,desc:'Embedded systems, VLSI, IoT, Communication',companies:['Intel','Qualcomm','BSNL','ISRO','BEL'],skills:['VLSI','Embedded C','IoT','PCB'],gate:true,psu:true},
+  {id:'eee',name:'EEE',full:'Electrical & Electronics Engg',icon:'⚡',salary:'4-20 LPA',rating:80,desc:'Power systems, control systems, automation',companies:['BHEL','NTPC','Power Grid','Siemens','ABB'],skills:['Power Systems','PLC','MATLAB'],gate:true,psu:true},
+  {id:'mech',name:'Mech',full:'Mechanical Engineering',icon:'⚙️',salary:'4-18 LPA',rating:78,desc:'Design, manufacturing, thermodynamics',companies:['TATA Motors','L&T','DRDO','HAL','Bosch'],skills:['CAD/CAM','SolidWorks','ANSYS'],gate:true,psu:true},
+  {id:'civil',name:'Civil',full:'Civil Engineering',icon:'🏗️',salary:'4-20 LPA',rating:75,desc:'Construction, infrastructure, structural design',companies:['L&T','DLF','NHAI','PWD','IRCON'],skills:['AutoCAD','STAAD Pro','GIS'],gate:true,psu:true},
+  {id:'aids',name:'AI & DS',full:'Artificial Intelligence & Data Science',icon:'🤖',salary:'10-50 LPA',rating:98,desc:'Machine learning, deep learning, analytics',companies:['Google','Meta','NVIDIA','Razorpay'],skills:['Python','TensorFlow','SQL','Statistics'],gate:false,psu:false},
+  {id:'biomed',name:'Biomedical',full:'Biomedical Engineering',icon:'🧬',salary:'4-15 LPA',rating:72,desc:'Medical devices, healthcare technology',companies:['GE Healthcare','Philips','Siemens Healthineers'],skills:['Instrumentation','Medical Imaging','MATLAB'],gate:true,psu:false},
+  {id:'robotics',name:'Robotics',full:'Robotics & Automation',icon:'🦾',salary:'6-30 LPA',rating:90,desc:'Industrial automation, AI robotics, IoT',companies:['ABB','Fanuc','Bosch','Amazon Robotics'],skills:['ROS','Python','Control Systems'],gate:false,psu:false},
+  {id:'aero',name:'Aerospace',full:'Aerospace Engineering',icon:'🚀',salary:'5-25 LPA',rating:82,desc:'Aircraft design, propulsion, avionics',companies:['ISRO','HAL','DRDO','Boeing','Airbus'],skills:['CFD','CATIA','Aerodynamics'],gate:true,psu:true}
+];
+
+const MEDICAL_OPTIONS=[
+  {name:'MBBS',icon:'🩺',duration:'5.5 years',neet:'Required',salary:'6-50+ LPA',desc:'Bachelor of Medicine and Surgery — the primary medical degree'},
+  {name:'BDS',icon:'🦷',duration:'5 years',neet:'Required',salary:'4-30 LPA',desc:'Bachelor of Dental Surgery — dental medicine'},
+  {name:'Siddha',icon:'🌿',duration:'5.5 years',neet:'Required',salary:'3-15 LPA',desc:'Traditional Tamil medicine system with modern practice'},
+  {name:'Ayurveda (BAMS)',icon:'🪴',duration:'5.5 years',neet:'Required',salary:'3-15 LPA',desc:'Ancient Indian system of medicine'},
+  {name:'B.Pharm',icon:'💊',duration:'4 years',neet:'Not Required',salary:'3-20 LPA',desc:'Pharmaceutical sciences — drug development and dispensing'},
+  {name:'B.Sc Nursing',icon:'👩‍⚕️',duration:'4 years',neet:'Not Required',salary:'3-12 LPA',desc:'Comprehensive nursing education for hospitals'},
+  {name:'Physiotherapy (BPT)',icon:'🏃',duration:'4.5 years',neet:'Not Required',salary:'3-15 LPA',desc:'Physical therapy and rehabilitation medicine'}
+];
+
+function renderCareers(){
+  const gid=state.hscGroup;
+  const access=CAREER_ACCESS[gid]||['arts','government'];
+  const div=document.getElementById('careers-content');
+  let html='';
+
+  if(access.includes('engineering')){
+    html+=`<h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:var(--accent)">⚙️ Engineering Branches</h3>
+    <div class="career-grid">
+    ${ENGINEERING_BRANCHES.map(b=>`
+      <div class="career-card engineering" onclick="showBranchDetail('${b.id}')">
+        <div class="career-stripe engineering"></div>
+        <div style="font-size:2rem;margin-bottom:0.75rem">${b.icon}</div>
+        <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.35rem">${b.name}</div>
+        <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${b.desc}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="badge badge-accent">${b.salary}</span>
+          <span style="color:var(--muted2);font-size:0.75rem">⭐ ${b.rating}/100</span>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  if(access.includes('medical')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:var(--accent2)">🏥 Medical Courses</h3>
+    <div class="alert alert-info" style="margin-bottom:1rem">⚕️ NEET-UG is mandatory for most medical courses. Prepare through National Testing Agency.</div>
+    <div class="career-grid">
+    ${MEDICAL_OPTIONS.map(m=>`
+      <div class="career-card medical" onclick="showMedicalDetail('${m.name}')">
+        <div class="career-stripe medical"></div>
+        <div style="font-size:2rem;margin-bottom:0.75rem">${m.icon}</div>
+        <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.35rem">${m.name}</div>
+        <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${m.desc}</div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="badge badge-success">${m.salary}</span>
+          <span class="badge badge-accent">${m.duration}</span>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  if(access.includes('it')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:var(--accent)">💻 IT & Technology Careers</h3>
+    <div class="career-grid">
+      ${[
+        {name:'Software Developer',salary:'6-40 LPA',desc:'Build apps and systems'},
+        {name:'Data Scientist',salary:'8-45 LPA',desc:'ML/AI and analytics'},
+        {name:'Cybersecurity',salary:'6-35 LPA',desc:'Network & data security'},
+        {name:'Cloud Engineer',salary:'8-40 LPA',desc:'AWS, Azure, GCP'},
+        {name:'Full Stack Dev',salary:'6-35 LPA',desc:'Frontend + Backend'},
+        {name:'UI/UX Designer',salary:'4-25 LPA',desc:'Product design'}
+      ].map(c=>`
+        <div class="career-card it">
+          <div class="career-stripe it"></div>
+          <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.4rem">${c.name}</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${c.desc}</div>
+          <span class="badge badge-accent">${c.salary}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if(access.includes('commerce')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:var(--accent3)">📊 Commerce Careers</h3>
+    <div class="career-grid">
+      ${[
+        {name:'Chartered Accountant (CA)',salary:'8-50+ LPA',desc:'ICAI exam — Top finance profession'},
+        {name:'Company Secretary (CS)',salary:'5-25 LPA',desc:'ICSI exam — Corporate law & compliance'},
+        {name:'BCom',salary:'3-12 LPA',desc:'Foundation for finance careers'},
+        {name:'Banking (IBPS/SBI)',salary:'4-15 LPA',desc:'PO, Clerk, Specialist Officer'},
+        {name:'MBA Finance',salary:'8-40 LPA',desc:'CAT/MAT → Top B-schools'},
+        {name:'CMA',salary:'5-20 LPA',desc:'Cost Management Accountant'}
+      ].map(c=>`
+        <div class="career-card commerce">
+          <div class="career-stripe commerce"></div>
+          <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.4rem">${c.name}</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${c.desc}</div>
+          <span class="badge badge-warning">${c.salary}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if(access.includes('arts')||access.includes('law')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem" style="color:#ff80ff">🎨 Arts & Humanities</h3>
+    <div class="career-grid">
+      ${[
+        {name:'BA / MA',salary:'3-15 LPA',desc:'Literature, History, Political Science'},
+        {name:'Law (LLB)',salary:'4-30+ LPA',desc:'Legal profession — judiciary or corporate'},
+        {name:'Journalism',salary:'3-15 LPA',desc:'Media, news, content creation'},
+        {name:'Social Work',salary:'3-10 LPA',desc:'NGO, government welfare'},
+        {name:'Psychology',salary:'4-20 LPA',desc:'Clinical, counseling, HR'},
+        {name:'Fine Arts/Design',salary:'3-25 LPA',desc:'Art, graphic design, film'}
+      ].map(c=>`
+        <div class="career-card arts">
+          <div class="career-stripe arts"></div>
+          <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.4rem">${c.name}</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${c.desc}</div>
+          <span style="color:#ff80ff;font-size:0.85rem;font-weight:600">${c.salary}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if(access.includes('government')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:#ffd700">🏛️ Government Exam Careers</h3>
+    <div class="career-grid">
+      ${[
+        {name:'TNPSC (Group I-IV)',salary:'25K-80K/month',desc:'Tamil Nadu state government jobs'},
+        {name:'UPSC (IAS/IPS)',salary:'56K-2.5L/month',desc:'Civil services — all India'},
+        {name:'SSC CGL/CHSL',salary:'18K-47K/month',desc:'Central government clerical posts'},
+        {name:'Banking (IBPS)',salary:'24K-42K/month',desc:'PO and Clerk posts'},
+        {name:'Railway (RRB)',salary:'19K-35K/month',desc:'ALP, Tech, Group D'},
+        {name:'Defence (CDS/NDA)',salary:'56K-2.5L/month',desc:'Army, Navy, Air Force officer'}
+      ].map(c=>`
+        <div class="career-card government">
+          <div class="career-stripe government"></div>
+          <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.4rem">${c.name}</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${c.desc}</div>
+          <span style="color:#ffd700;font-size:0.85rem;font-weight:600">${c.salary}</span>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:1.5rem"><button class="btn btn-secondary btn-sm" onclick="showSection('govt')">View All Govt Jobs →</button></div>`;
+  }
+
+  if(access.includes('research')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:var(--accent)">🔭 Research & BSc Programs</h3>
+    <div class="career-grid">
+      ${[
+        {name:'BSc Physics/Chemistry',salary:'3-15 LPA',desc:'MSc → PhD → Research'},
+        {name:'BSc Biotechnology',salary:'4-18 LPA',desc:'Life sciences, pharma research'},
+        {name:'CSIR NET/JRF',salary:'5-20 LPA',desc:'National research fellowship'},
+        {name:'MSc → Teaching',salary:'4-15 LPA',desc:'UGC NET → Professor'},
+        {name:'IISER / IISc',salary:'5-25 LPA',desc:'Premier research institutes'}
+      ].map(c=>`
+        <div class="career-card">
+          <div class="career-stripe"></div>
+          <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.4rem">${c.name}</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${c.desc}</div>
+          <span class="badge badge-accent">${c.salary}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if(access.includes('diploma')){
+    html+=`<div class="glow-line"></div><h3 style="font-family:var(--heading);margin:2rem 0 1rem;color:var(--accent)">🔧 Diploma & Vocational Careers</h3>
+    <div class="career-grid">
+      ${[
+        {name:'Diploma in Engineering',salary:'2-10 LPA',desc:'3-year polytechnic diploma'},
+        {name:'ITI Trades',salary:'2-8 LPA',desc:'Electrician, Fitter, Welder, etc.'},
+        {name:'Computer Applications',salary:'2-8 LPA',desc:'DCA, PGDCA, Tally'},
+        {name:'Hospitality',salary:'2-12 LPA',desc:'Hotel management, travel, events'},
+        {name:'Graphic Design',salary:'2-15 LPA',desc:'Adobe suite, UI design'}
+      ].map(c=>`
+        <div class="career-card">
+          <div class="career-stripe"></div>
+          <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.4rem">${c.name}</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem">${c.desc}</div>
+          <span class="badge badge-accent">${c.salary}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  html+=`<div class="glow-line"></div>
+    <div style="text-align:center;padding:2rem 0">
+      <button class="btn btn-success" onclick="showFinalWelcome()">✓ Complete My Profile & Get Welcome Email</button>
+    </div>`;
+
+  div.innerHTML=html;
+}
+
+// ============================================================
+//  BRANCH DETAIL
+// ============================================================
+function showBranchDetail(id){
+  const branch=ENGINEERING_BRANCHES.find(b=>b.id===id);
+  if(!branch) return;
+  document.getElementById('branch-detail-title').textContent=branch.full;
+  document.getElementById('branch-detail-sub').textContent=branch.desc;
+
+  const trendingMap={
+    cse:['Generative AI','Cloud Computing','Blockchain','DevOps','Quantum Computing'],
+    ece:['5G/6G','Edge AI','RISC-V','Photonics','Neuromorphic Chips'],
+    eee:['EV Technology','Smart Grid','Renewable Energy','Power Electronics','IoT'],
+    mech:['Industry 4.0','3D Printing','Electric Vehicles','Drones','Composites'],
+    civil:['BIM','Smart Cities','Green Buildings','Geotechnical AI','Sustainable Infra'],
+    aids:['LLMs','Computer Vision','MLOps','Federated Learning','AI Ethics'],
+    biomed:['Wearable Tech','Neural Interfaces','Genomics','Telemedicine','Nanomedicine'],
+    robotics:['Collaborative Robots','Swarm Robotics','Exoskeletons','Autonomous Vehicles'],
+    aero:['Space Tourism','Hypersonic','UAV/Drones','Green Aviation','ISRO Missions']
+  };
+  const higherStudyMap={
+    cse:'MTech CSE, MS (US/UK), MBA, Data Science MS',
+    ece:'MTech VLSI, MS Embedded, MS Communication, GATE → PSU',
+    eee:'MTech Power Sys, MS Control, GATE → BHEL/NTPC',
+    mech:'MTech Manufacturing, MS (Germany), MBA, GATE → HAL',
+    civil:'MTech Structural, MS Geo, GATE → NHAI/PWD',
+    aids:'MS Data Science, MTech AI, Research at IIT/IISc',
+    biomed:'MS Biomedical, MD/PhD, Clinical Research',
+    robotics:'MS Robotics, MS AI, MS Mechatronics',
+    aero:'MTech Aero, MS Aerospace, ISRO Scientist'
+  };
+
+  const div=document.getElementById('branch-detail-content');
+  div.innerHTML=`
+    <div class="detail-section">
+      <div class="detail-title">💰 Salary Package</div>
+      <div class="salary-range">${branch.salary}</div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-top:0.5rem">Fresher to Senior Engineer range (India)</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+      <div class="detail-section">
+        <div class="detail-title">🏢 Top Companies</div>
+        <div class="tag-list">${branch.companies.map(c=>`<span class="tag">${c}</span>`).join('')}</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-title">🛠️ Required Skills</div>
+        <div class="tag-list">${branch.skills.map(s=>`<span class="tag green">${s}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-title">🚀 Trending Technologies</div>
+      <div class="tag-list">${(trendingMap[id]||[]).map(t=>`<span class="tag orange">${t}</span>`).join('')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+      <div class="detail-section">
+        <div class="detail-title">📈 Career Rating</div>
+        <div style="margin-top:0.5rem">
+          <div class="rating-bar"><div style="min-width:80px;font-size:0.85rem">Overall</div><div style="flex:1;background:rgba(0,200,255,0.08);border-radius:4px;height:8px"><div class="rating-fill" style="width:${branch.rating}%"></div></div><div style="min-width:40px;text-align:right;font-weight:600">${branch.rating}</div></div>
+          <div class="rating-bar"><div style="min-width:80px;font-size:0.85rem">Demand</div><div style="flex:1;background:rgba(0,200,255,0.08);border-radius:4px;height:8px"><div class="rating-fill" style="width:${Math.min(branch.rating+5,100)}%"></div></div><div style="min-width:40px;text-align:right;font-weight:600">${Math.min(branch.rating+5,100)}</div></div>
+          <div class="rating-bar"><div style="min-width:80px;font-size:0.85rem">Salary</div><div style="flex:1;background:rgba(0,200,255,0.08);border-radius:4px;height:8px"><div class="rating-fill" style="width:${branch.rating-5}%"></div></div><div style="min-width:40px;text-align:right;font-weight:600">${branch.rating-5}</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-title">🎓 Higher Studies</div>
+        <p style="color:var(--text);font-size:0.9rem;line-height:1.6">${higherStudyMap[id]||'MTech → PhD or MBA route available'}</p>
+        ${branch.gate?'<div style="margin-top:0.75rem"><span class="badge badge-accent">GATE Applicable</span></div>':''}
+        ${branch.psu?'<div style="margin-top:0.5rem"><span class="badge badge-success">PSU Jobs via GATE</span></div>':''}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-title">🌐 Foreign Opportunities</div>
+      <p style="color:var(--text);font-size:0.9rem;line-height:1.6">MS programs available in USA, Germany, Canada, UK, Australia. GRE + TOEFL/IELTS required. Average stipend: $20,000–$40,000/year.</p>
+      <div style="margin-top:1rem"><button class="btn btn-secondary btn-sm" onclick="showSection('entrance')">Entrance Exam Guide →</button></div>
+    </div>
+    <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-success" onclick="selectCareerAndComplete('${branch.full}')">✓ Choose This Career Path</button>
+      <button class="btn btn-secondary" onclick="showSection('step-careers')">← Explore More Careers</button>
+    </div>`;
+
+  showSection('step-branch-detail');
+}
+
+function showMedicalDetail(name){
+  const m=MEDICAL_OPTIONS.find(x=>x.name===name);
+  if(!m) return;
+  document.getElementById('branch-detail-title').textContent=m.name;
+  document.getElementById('branch-detail-sub').textContent=m.desc;
+  document.getElementById('branch-detail-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+      <div class="detail-section"><div class="detail-title">⏱️ Duration</div><div class="salary-range" style="color:var(--accent2)">${m.duration}</div></div>
+      <div class="detail-section"><div class="detail-title">💰 Salary</div><div class="salary-range">${m.salary}</div></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-title">📋 Eligibility & Entrance</div>
+      <p style="color:var(--text);line-height:1.7;font-size:0.95rem">NEET-UG: ${m.neet}<br>Minimum 50% in PCB for general category (40% for reserved).<br>Age: 17–25 years. Indian citizenship required for government medical seats.</p>
+    </div>
+    <div class="detail-section">
+      <div class="detail-title">🏥 Higher Studies & Career</div>
+      <div class="tag-list">
+        <span class="tag">MD/MS Specialization</span>
+        <span class="tag">DNB</span>
+        <span class="tag green">Government Hospital Jobs</span>
+        <span class="tag green">Private Practice</span>
+        <span class="tag orange">Foreign Medical License (USMLE/PLAB)</span>
+      </div>
+    </div>
+    <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-success" onclick="selectCareerAndComplete('${m.name}')">✓ Choose This Career Path</button>
+      <button class="btn btn-secondary" onclick="showSection('step-careers')">← Back to Careers</button>
+    </div>`;
+  showSection('step-branch-detail');
+}
+
+function selectCareerAndComplete(career){
+  state.selectedCareer=career;
+  showFinalWelcome();
+}
+
+function goBackFromAnalysis(){
+  if(state.educationLevel==='hsc') showSection('step-hsc');
+  else showSection('step-sslc');
+}
+
+// ============================================================
+//  WELCOME SCREEN
+// ============================================================
+function showFinalWelcome(){
+  renderWelcomeScreen(state.userData.name||'Student', state.selectedCareer||'your chosen field','Career Path',state.selectedCareer||'All Streams');
+  showSection('step-welcome');
+}
+
+function renderWelcomeScreen(name, career, label, careerDetail){
+  const div=document.getElementById('welcome-content');
+  const tips={
+    'CSE':'Focus on DSA and build projects on GitHub. LeetCode practice is essential for product companies.',
+    'ECE':'Learn Embedded C and VLSI fundamentals. Work on hardware projects using Arduino/Raspberry Pi.',
+    'MBBS':'Start NEET preparation now. Focus on NCERT Biology, Physics, Chemistry thoroughly.',
+    'Bio-Maths':'Decide early between Engineering and Medical. Focus on NEET/JEE preparation.',
+    default:'Set clear goals, build a strong foundation, and stay consistent. Success comes to the prepared.'
+  };
+  const tip=Object.keys(tips).find(k=>career.includes(k))||'default';
+
+  div.innerHTML=`
+    <div class="welcome-hero">
+      <span class="checkmark">🎯</span>
+      <h3 style="font-family:var(--heading);font-size:2rem;margin-bottom:0.75rem">Welcome, <span class="grad-text">${name}!</span></h3>
+      <p style="color:var(--muted);font-size:1rem;max-width:500px;margin:0 auto 1.5rem;line-height:1.7">Your Smart Career Guidance profile is complete. Here's your personalized roadmap.</p>
+      ${careerDetail?`<span class="badge badge-success" style="font-size:0.9rem;padding:0.5rem 1.25rem">🚀 ${careerDetail}</span>`:''}
+    </div>
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem;border-color:rgba(0,255,136,0.25)">
+      <h3 style="font-family:var(--heading);color:var(--accent2);margin-bottom:1rem">💌 Welcome Email — Sent to ${state.userData.email||'your inbox'}</h3>
+      <div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:1.5rem;font-size:0.9rem;line-height:1.9;color:var(--text)">
+        <strong>Subject:</strong> Welcome to Smart Career Guidance Platform 🎯<br><br>
+        Dear <strong>${name}</strong>,<br><br>
+        Congratulations on completing your career assessment on the <strong>Smart Career Guidance Platform</strong>!<br><br>
+        ${career?`Your profile shows strong interest in <strong>${career}</strong>. Based on your academic performance and chosen stream, this is an excellent match for your skills and future goals.`:'Your assessment shows great potential across multiple career domains.'}<br><br>
+        <strong>Your Personalized Tip:</strong><br>
+        ${tips[tip]}<br><br>
+        We wish you every success in your academic and professional journey.<br><br>
+        Warm regards,<br>
+        <strong>Kalidass</strong><br>
+        <em>Smart Career Guidance Platform</em>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem">
+      <div class="glass-card" style="padding:1.5rem;cursor:pointer" onclick="showSection('entrance')">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem">📝</div>
+        <div style="font-weight:600;margin-bottom:0.25rem">Entrance Exams</div>
+        <div style="color:var(--muted);font-size:0.82rem">JEE, NEET, GATE, CAT guide</div>
+      </div>
+      <div class="glass-card" style="padding:1.5rem;cursor:pointer" onclick="showSection('govt')">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem">🏛️</div>
+        <div style="font-weight:600;margin-bottom:0.25rem">Govt Job Guide</div>
+        <div style="color:var(--muted);font-size:0.82rem">TNPSC, SSC, Railway, Defence</div>
+      </div>
+      <div class="glass-card" style="padding:1.5rem;cursor:pointer" onclick="showSection('home')">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem">🏠</div>
+        <div style="font-weight:600;margin-bottom:0.25rem">Back to Home</div>
+        <div style="color:var(--muted);font-size:0.82rem">Explore all features</div>
+      </div>
+    </div>`;
+
+  // Update dashboard
+  state.dashData.total++;
+  if(career.includes('Engineering')||career.includes('CSE')||career.includes('ECE')||career.includes('Mech')) state.dashData.eng++;
+  else if(career.includes('MBBS')||career.includes('Medical')||career.includes('BDS')) state.dashData.med++;
+  else if(career.includes('Commerce')||career.includes('CA')||career.includes('Banking')) state.dashData.comm++;
+  else if(career.includes('Government')||career.includes('TNPSC')||career.includes('UPSC')) state.dashData.govt++;
+  else state.dashData.arts++;
+
+  updateHeroStats();
+  showNotification(`New user: ${name}`,`${career} · ${state.userData.district||'Tamil Nadu'}`);
+}
+
+// ============================================================
+//  ENTRANCE EXAMS
+// ============================================================
+function renderEntrance(){
+  const exams=[
+    {name:'JEE',full:'Joint Entrance Exam',badge:'Engineering',color:'#00c8ff',icon:'⚙️',
+     details:'Conducted by NTA. Two levels: JEE Main (NITs, IIITs) and JEE Advanced (IITs). Duration: 3 hours. Subjects: Physics, Chemistry, Mathematics.',
+     eligibility:'12th PCM with min 75% (65% for SC/ST). Age limit: max 2 attempts in consecutive years.',
+     benefits:['Admission to IITs, NITs, IIITs, CFTIs','Top colleges accept JEE Main scores','Scholarship opportunities']},
+    {name:'NEET',full:'National Eligibility cum Entrance Test',badge:'Medical',color:'#00ff88',icon:'🩺',
+     details:'Single entrance for all medical UG programs. Conducted by NTA. 720 marks. Subjects: Biology (360), Physics, Chemistry.',
+     eligibility:'12th PCB with min 50% (40% SC/ST/OBC). Age: 17–25 years.',
+     benefits:['MBBS, BDS, AYUSH admissions','Government & private medical colleges','State quota + All India quota']},
+    {name:'GATE',full:'Graduate Aptitude Test in Engineering',badge:'PG/PSU',color:'#8000ff',icon:'🎓',
+     details:'Conducted by IITs. For MTech admissions and PSU recruitment. 65 questions, 100 marks.',
+     eligibility:'BE/BTech graduates. No age limit. Valid for 3 years.',
+     benefits:['MTech at IITs/NITs','PSU jobs (BHEL, NTPC, ONGC, BEL etc.)','Stipend ₹12,400/month for MTech','Foreign scholarships (DAAD Germany)']},
+    {name:'CAT',full:'Common Admission Test',badge:'MBA',color:'#ff6b35',icon:'💼',
+     details:'Conducted by IIMs. For MBA/PGDM admissions. 3 sections: VARC, DILR, QA.',
+     eligibility:'Any degree with 50% (45% SC/ST). Final year students eligible.',
+     benefits:['IIM admissions','Top B-schools (IIM A/B/C)','Average package: 15-30 LPA']},
+    {name:'UPSC',full:'Union Public Service Commission',badge:'IAS/IPS',color:'#ffd700',icon:'🏛️',
+     details:'India\'s most prestigious exam. 3 stages: Prelims, Mains (9 papers), Interview. Takes 12-18 months.',
+     eligibility:'Any degree. Age 21-32 (gen), 21-35 (OBC), 21-37 (SC/ST). 6 attempts general.',
+     benefits:['IAS, IPS, IFS, IRS services','All-India status posts','Grade A gazetted officer']},
+    {name:'IELTS',full:'International English Language Testing System',badge:'Foreign Study',color:'#00c8ff',icon:'✈️',
+     details:'British Council/IDP test. 4 skills: Listening, Reading, Writing, Speaking. Score 1-9.',
+     eligibility:'Anyone. No minimum qualification. Score valid 2 years.',
+     benefits:['UK university admissions','Australia, Canada PR pathway','Score 6.5+ for top universities']},
+    {name:'TOEFL',full:'Test of English as a Foreign Language',badge:'USA Study',color:'#0080ff',icon:'🇺🇸',
+     details:'ETS exam. Internet-based test. 4 sections. Score 0-120. Duration 3 hours.',
+     eligibility:'Anyone planning to study abroad. No minimum qualification.',
+     benefits:['US, Canada university admissions','Score 90+ for good universities','Valid 2 years']},
+    {name:'GRE',full:'Graduate Record Examination',badge:'MS Abroad',color:'#ff0080',icon:'🌍',
+     details:'ETS exam for MS/PhD admissions abroad. Verbal, Quantitative, Analytical Writing. Score 260-340.',
+     eligibility:'Bachelor\'s degree. No age limit. Score valid 5 years.',
+     benefits:['MS/PhD in USA, UK, Germany','Score 320+ for top universities','Some MBA programs accept GRE']}
+  ];
+
+  document.getElementById('entrance-content').innerHTML=exams.map(e=>`
+    <div class="exam-card">
+      <div style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+        <div style="font-size:2.5rem">${e.icon}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem">
+            <h3 style="font-family:var(--heading);font-size:1.2rem">${e.name}</h3>
+            <span class="exam-badge" style="background:${e.color}22;color:${e.color};border:1px solid ${e.color}44">${e.badge}</span>
+          </div>
+          <div style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">${e.full}</div>
+          <p style="font-size:0.9rem;line-height:1.7;margin-bottom:0.75rem">${e.details}</p>
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem"><strong style="color:var(--text)">Eligibility:</strong> ${e.eligibility}</p>
+          <div class="tag-list">${e.benefits.map(b=>`<span class="tag green">${b}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+//  GOVT JOBS
+// ============================================================
+function renderGovt(){
+  const categories=[
+    {qual:'10th Pass (SSLC)',color:'var(--accent)',jobs:[
+      {name:'Railway Group D (RRB)',salary:'₹18,000–22,000/month',dept:'Indian Railways'},
+      {name:'SSC MTS',salary:'₹18,000–22,000/month',dept:'Central Govt'},
+      {name:'TNPSC Group IV',salary:'₹15,700–25,000/month',dept:'TN State Govt'},
+      {name:'Army Soldier GD',salary:'₹21,700–32,000/month',dept:'Indian Army'},
+      {name:'Police Constable',salary:'₹19,500–30,000/month',dept:'State Police'}
+    ]},
+    {qual:'12th Pass (HSC)',color:'var(--accent2)',jobs:[
+      {name:'Railway ALP (Assistant Loco Pilot)',salary:'₹19,900–35,000/month',dept:'Indian Railways'},
+      {name:'SSC CHSL (LDC/DEO)',salary:'₹19,900–28,000/month',dept:'Central Govt'},
+      {name:'TNPSC Group III',salary:'₹20,000–35,000/month',dept:'TN State Govt'},
+      {name:'Bank Clerk (IBPS)',salary:'₹24,000–35,000/month',dept:'Nationalized Banks'},
+      {name:'NDA Exam',salary:'₹56,100+ (officer)',dept:'Defence'},
+      {name:'Air Force AFCAT',salary:'₹56,100+ (officer)',dept:'Indian Air Force'}
+    ]},
+    {qual:'Degree Holders',color:'var(--accent3)',jobs:[
+      {name:'UPSC Civil Services (IAS/IPS)',salary:'₹56,100–2,50,000/month',dept:'Central Govt'},
+      {name:'TNPSC Group I',salary:'₹56,100–1,00,000/month',dept:'TN State Govt'},
+      {name:'SSC CGL',salary:'₹25,500–81,100/month',dept:'Central Govt'},
+      {name:'Bank PO (IBPS)',salary:'₹32,000–45,000/month',dept:'Nationalized Banks'},
+      {name:'SBI PO',salary:'₹41,960–50,000/month',dept:'State Bank of India'},
+      {name:'Railway RRB NTPC',salary:'₹19,900–35,400/month',dept:'Indian Railways'},
+      {name:'GATE → PSU',salary:'₹40,000–80,000/month',dept:'BHEL, NTPC, ONGC etc.'},
+      {name:'Defence CDS (Officer)',salary:'₹56,100–1,78,000/month',dept:'Army/Navy/Air Force'}
+    ]}
+  ];
+
+  document.getElementById('govt-content').innerHTML=categories.map(cat=>`
+    <div style="margin-bottom:2.5rem">
+      <h3 style="font-family:var(--heading);font-size:1.2rem;color:${cat.color};margin-bottom:1.25rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">📋 ${cat.qual}</h3>
+      ${cat.jobs.map(j=>`
+        <div class="job-card">
+          <div style="font-size:1.75rem">🏛️</div>
+          <div style="flex:1">
+            <div style="font-family:var(--heading);font-size:1rem;margin-bottom:0.25rem">${j.name}</div>
+            <div style="color:var(--muted);font-size:0.82rem;margin-bottom:0.5rem">${j.dept}</div>
+            <span class="badge" style="background:rgba(255,215,0,0.1);color:#ffd700;border:1px solid rgba(255,215,0,0.25)">${j.salary}</span>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ============================================================
+//  DASHBOARD
+// ============================================================
+function renderDashboard(){
+  const d=state.dashData;
+  const div=document.getElementById('dashboard-content');
+  div.innerHTML=`
+    <div class="dash-grid">
+      <div class="dash-stat"><div class="dash-num grad-text">${d.total}</div><div class="dash-lbl">Total Users</div></div>
+      <div class="dash-stat"><div class="dash-num" style="color:var(--accent)">${d.eng}</div><div class="dash-lbl">Engineering</div></div>
+      <div class="dash-stat"><div class="dash-num" style="color:var(--accent2)">${d.med}</div><div class="dash-lbl">Medical</div></div>
+      <div class="dash-stat"><div class="dash-num" style="color:var(--accent3)">${d.comm}</div><div class="dash-lbl">Commerce</div></div>
+      <div class="dash-stat"><div class="dash-num" style="color:#ffd700">${d.govt}</div><div class="dash-lbl">Govt Jobs</div></div>
+      <div class="dash-stat"><div class="dash-num" style="color:#ff80ff">${d.arts}</div><div class="dash-lbl">Arts/Other</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:2rem">
+      <div class="glass-card" style="padding:1.5rem">
+        <h3 style="font-family:var(--heading);font-size:1rem;margin-bottom:1.25rem;color:var(--accent)">Career Distribution</h3>
+        <div style="position:relative;height:280px">
+          <canvas id="pieChart" role="img" aria-label="Pie chart of career distribution"></canvas>
+        </div>
+      </div>
+      <div class="glass-card" style="padding:1.5rem">
+        <h3 style="font-family:var(--heading);font-size:1rem;margin-bottom:1.25rem;color:var(--accent)">Stream Analysis</h3>
+        <div style="position:relative;height:280px">
+          <canvas id="barChart" role="img" aria-label="Bar chart of stream analysis"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-info">
+      📊 Dashboard shows real-time data from the current session. Google Sheets integration logs all registrations persistently. Connect your Apps Script URL to see live data from all sessions.
+    </div>`;
+
+  setTimeout(()=>{
+    const pieCtx=document.getElementById('pieChart');
+    if(pieCtx) new Chart(pieCtx,{
+      type:'doughnut',
+      data:{
+        labels:['Engineering','Medical','Commerce','Government','Arts/Other'],
+        datasets:[{
+          data:[d.eng||12,d.med||8,d.comm||6,d.govt||10,d.arts||4],
+          backgroundColor:['rgba(0,200,255,0.8)','rgba(0,255,136,0.8)','rgba(255,107,53,0.8)','rgba(255,215,0,0.8)','rgba(255,128,255,0.8)'],
+          borderColor:['#00c8ff','#00ff88','#ff6b35','#ffd700','#ff80ff'],
+          borderWidth:2
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{color:'#7a9bb5',padding:15,font:{size:12}}}}
+      }
+    });
+
+    const barCtx=document.getElementById('barChart');
+    if(barCtx) new Chart(barCtx,{
+      type:'bar',
+      data:{
+        labels:['Eng','Medical','Commerce','Govt','Arts'],
+        datasets:[{
+          label:'Students',
+          data:[d.eng||12,d.med||8,d.comm||6,d.govt||10,d.arts||4],
+          backgroundColor:['rgba(0,200,255,0.7)','rgba(0,255,136,0.7)','rgba(255,107,53,0.7)','rgba(255,215,0,0.7)','rgba(255,128,255,0.7)'],
+          borderRadius:8,borderSkipped:false
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#7a9bb5'}},
+          x:{grid:{display:false},ticks:{color:'#7a9bb5'}}
+        }
+      }
+    });
+  },100);
+}
+
+// ============================================================
+//  GOOGLE SHEETS INTEGRATION
+// ============================================================
+async function sendToSheets(data){
+  try{
+    const payload={...data,timestamp:new Date().toISOString(),source:'CareerIQ'};
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+  }catch(e){
+    console.log('Sheets integration note:',e.message);
+  }
+}
+
+// ============================================================
+//  NOTIFICATIONS & UI HELPERS
+// ============================================================
+function showNotification(title,msg){
+  const n=document.getElementById('notification');
+  document.getElementById('notif-title').textContent='✓ '+title;
+  document.getElementById('notif-msg').textContent=msg;
+  n.classList.remove('hidden');
+  setTimeout(()=>n.classList.add('hidden'),5000);
+}
+
+function showAlert(msg,type='info'){
+  const map={info:'alert-info',success:'alert-success',warning:'alert-warning'};
+  const el=document.createElement('div');
+  el.className='alert '+map[type];
+  el.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:400;min-width:320px;text-align:center;animation:fadeIn 0.3s ease';
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('active')}
+
+function updateHeroStats(){
+  const el=document.getElementById('hero-stat1');
+  if(el) el.textContent=state.dashData.total;
+}
+
+// ============================================================
+//  RENDER CAREERS when section activates
+// ============================================================
+document.getElementById('step-careers').addEventListener('transitionend',()=>{});
+const origShowSection=showSection;
+window.showSection=function(id){
+  origShowSection(id);
+  if(id==='step-careers') setTimeout(renderCareers,50);
+};
+
+// ============================================================
+//  INIT
+// ============================================================
+// Animate hero counter
+let c=0;
+const target=1248;
+const timer=setInterval(()=>{c+=Math.ceil((target-c)/10);document.getElementById('hero-stat1').textContent=c;if(c>=target){clearInterval(timer);document.getElementById('hero-stat1').textContent=target;}},30);
+</script>
+</body>
+</html>
